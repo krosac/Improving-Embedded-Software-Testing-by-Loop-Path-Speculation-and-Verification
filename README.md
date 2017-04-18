@@ -1,4 +1,4 @@
-# KELL-Debug-Version-Installation-fo-Ubuntu16.04
+# KELL-Debug-Version-Installation-for-Ubuntu16.04
 
 -------------------------------------------------------------------------------
 
