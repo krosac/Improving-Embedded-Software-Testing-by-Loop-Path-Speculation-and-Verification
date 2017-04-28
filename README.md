@@ -7,6 +7,7 @@ The goal of project is split into 2 parts:
  1. Understand important components of KLEE: interpreter, memory model, 
     expressions, searcher
  2. Design innovative interpreter, implement machine learning
+
 For more details, please go to each PDF reports.
 
 -------------------------------------------------------------------------------
