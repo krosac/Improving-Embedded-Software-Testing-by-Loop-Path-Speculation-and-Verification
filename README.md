@@ -21,8 +21,8 @@ All the code from KLEE is C++.
 -------------------------------------------------------------------------------
 
 KLEE is a symbolic execution engine that works on LLVM bitcode.
-
 For more information about KLEE, please visit [KLEE website](https://klee.github.io/)
+
 -------------------------------------------------------------------------------
 
 
