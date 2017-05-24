@@ -1,4 +1,4 @@
-# Debug KELL with GDB on Ubuntu16.04
+# Debugging KELL with GDB on Ubuntu16.04
 
 -------------------------------------------------------------------------------
 
