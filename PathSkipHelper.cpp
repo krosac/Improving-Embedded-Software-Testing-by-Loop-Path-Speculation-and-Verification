@@ -34,9 +34,9 @@ PathSkipHelper::PathSkipHelper(Executor *executor, ExecutionState &state, bool s
 	falseInLoop_ = false;
 	
     if (singleState) {
-    	onlyState_ = 0;
-    } else {
     	onlyState_ = 1;
+    } else {
+    	onlyState_ = 0;
 	}
 }
 
