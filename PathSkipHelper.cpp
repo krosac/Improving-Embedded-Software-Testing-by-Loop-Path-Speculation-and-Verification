@@ -163,15 +163,72 @@ bool PathSkipHelper::isStateInLoop(ExecutionState &state, bool &inLoop, bool dir
       state.repeatNum = repeatNum;
       state.currLoopLen = loopLen;
       state.vecLoop = vecLoop;
-      inLoop = true;
-      return true;
-//    }
-  //}
-  
+      
+      //T: check whether the branch is in the loop
+      llvm::BasicBlock* brBB;
+      llvm::BasicBlock* br_true;
+      llvm::BasicBlock* br_false;
+      int br_cnt=0;
+      for(llvm::succ_iterator SI = succ_begin(currBB), EI = succ_end(currBB);SI!=EI;++SI, ++br_cnt){
+        if(br_cnt==0)
+          br_true = *SI;
+        else if(br_cnt==1)
+          br_false = *SI;
+        else {
+          errs()<<"currBB_check_whether_in_loop has more than two branches!\n";
+          break;
+        }
+      }
+      assert(br_true && br_false && "currBB_check_whether_in_loop has less than two branches!");
+      brBB = dir? br_true : br_false;
+      int flag=0;
+      int loop_idx=0;
+      //T: find the exact loop that currBB is in
+      for(std::vector<std::vector<llvm::BasicBlock*>>::iterator p1=executor_->loop_container.begin();p1!=executor_->loop_container.end();++p1){
+        for(std::vector<llvm::BasicBlock*>::iterator p2=(*p1).begin();p2!=(*p1).end();++p2)
+          if(currBB==*p2){
+            flag=1;
+            break;
+          }
+        if(flag==1)break;
+        loop_idx++;
+      }
+     //T: print BB's successors and predecessors in the loop: loop format suc==pred! <probably lead to search stuck>
+      /*
+      for(std::vector<llvm::BasicBlock*>::iterator p2=executor_->loop_container[loop_idx].begin();p2!=executor_->loop_container[loop_idx].end();++p2){
+          errs()<<(*p2)->getParent()->getName()<<":"<<(*p2)->getName()<<"\n";
+          errs()<<"	i	Successors:\n";
+      for(llvm::succ_iterator SI = succ_begin(*p2), EI = succ_end(*p2);SI!=EI;++SI){
+        errs()<<(*SI)->getParent()->getParent()<<":"<<(*SI)->getParent()->getName()<<":"<<(*SI)->getName()<<"\n";
+      }
+      errs()<<"i	Predecessors:\n";
+      for(llvm::pred_iterator SI = pred_begin(*p2), EI = pred_end(*p2);SI!=EI;++SI){
+        errs()<<(*SI)->getParent()->getParent()<<":"<<(*SI)->getParent()->getName()<<":"<<(*SI)->getName()<<"\n";
+      }
+      }
+      */
+      int is_in_loop=0;
+      for(std::vector<llvm::BasicBlock*>::iterator p2=executor_->loop_container[loop_idx].begin(),p2e=executor_->loop_container[loop_idx].end();p2!=p2e;++p2){
+        if(brBB==*p2){  
+          is_in_loop=1;
+          /*BasicBlock* tb = brBB->getSinglePredecessor();
+          for(llvm::succ_iterator SI = succ_begin(*p2), EI = succ_end(*p2);SI!=EI;++SI)
+            if(*SI==tb)
+              is_in_loop=0;*/
+          break;
+        }
+      }
+      if(is_in_loop==1){
+        inLoop = true;
+        return true;
+      }
+      else{
+        inLoop = false;
+        return false;
+      }
+   
   return false;
-  //find head of the loop
-  //get length of the loop
-  //checking constraint path pattern and get loopLen and repeated num
+  
 }
 
 void PathSkipHelper::skipState() {
